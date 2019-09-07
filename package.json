@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/LambdaSchool/node-db3-challenge#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
+    "express-session": "^1.16.2",
     "knex": "^0.19.2",
     "knex-cleaner": "^1.2.1",
     "sqlite3": "^4.1.0"
