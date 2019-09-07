@@ -2,10 +2,14 @@ const express = require('express');
 
 const Users = require('./user-model.js');
 
+const bcrypt = require('bcryptjs')
+
+const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
+
 const router = express.Router();
 
 
-router.get('/admin-list', (req, res) => {
+router.get('/admin-list', admin_restricted, (req, res) => {
   Users.find()
   .then(users => {
     res.json(users);
@@ -38,6 +42,8 @@ router.get('/profile/:id', (req, res) => {
 router.post('/register', (req, res) => {
   const userData = req.body;
 
+  userData.password = bcrypt.hashSync(userData.password, 10)
+
   Users.add(userData)
   .then(user => {
     res.status(201).json(user);
@@ -48,20 +54,24 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  const userData = req.body;
+  let {username, password} = req.body
 
-  Users.add(userData)
+  Users.findByUsername(username)
   .then(user => {
-    res.status(201).json(user);
+    if(user && bcrypt.compareSync(password, user.password)){
+      req.session.user = user
+      res.status(200).json({message: "Welcome!"})
+    } else {
+      res.status(500).json({message: "Invalid Credentials."})
+    }
   })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new user' });
-  });
+  .catch(error => {
+    res.status(500).json({message: "Invalid Credentials."})
+  })
 });
 
 
-
-router.put('/:id', (req, res) => {
+router.put('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
@@ -82,13 +92,18 @@ router.put('/:id', (req, res) => {
 });
 
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', admin_restricted, (req, res) => {
   const { id } = req.params;
       Users.remove(id)
       .then(deleted => {
         res.send("Success.")
       })
       .catch(err => { res.status(500).json({ message: 'Failed to delete user' }) });
+});
+
+router.delete('/logout', (req, res) => {
+  req.session.user = null;
+  res.status(200).json({message: "Logged out!"})
 });
 
 

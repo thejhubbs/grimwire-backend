@@ -3,6 +3,7 @@ const db = require('../../data/dbConfig.js');
 module.exports = {
   find,
   findById,
+  findByUsername,
   getImages,
   getThumbnail,
   add,
@@ -19,6 +20,12 @@ function find() {
 function findById(id) {
   return db('users')
     .where( 'user_id', id )
+    .first();
+}
+
+function findByUsername(username) {
+  return db('users')
+    .where({ username })
     .first();
 }
 
