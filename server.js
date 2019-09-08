@@ -1,5 +1,7 @@
 const express = require('express');
 
+
+const ImageRouter = require('./components/images/image-router.js');
 const PantheonRouter = require('./components/pantheons/pantheon-router.js');
 const KindRouter = require('./components/kinds/kind-router.js');
 const CategoryRouter = require('./components/categories/category-router.js');
@@ -11,19 +13,21 @@ const session = require('express-session');
 
 server.use(
   session({
-    name: 'notsession', // default is connect.sid
+    name: 'notsession',
     secret: 'nobody tosses a dwarf!',
     cookie: {
       maxAge: 1 * 24 * 60 * 60 * 1000,
-      secure: false, // only set cookies over https. Server will not send back a cookie over http.
-    }, // 1 day in milliseconds
-    httpOnly: true, // don't let JS code access cookies. Browser extensions run JS code on your browser!
+      secure: false,
+    },
+    httpOnly: true,
     resave: false,
     saveUninitialized: false,
   })
 );
 
+server.use('/uploads', express.static('uploads'))
 server.use(express.json());
+server.use('/api/images', ImageRouter);
 server.use('/api/pantheons', PantheonRouter);
 server.use('/api/kinds', KindRouter);
 server.use('/api/categories', CategoryRouter);

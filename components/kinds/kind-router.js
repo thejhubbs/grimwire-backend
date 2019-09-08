@@ -2,7 +2,10 @@ const express = require('express');
 
 const Kinds = require('./kind-model.js');
 
+const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
+
 const router = express.Router();
+
 
 
 router.get('/', (req, res) => {
@@ -37,7 +40,7 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', mod_restricted, (req, res) => {
   const kindData = req.body;
 
   Kinds.add(kindData)
@@ -49,7 +52,7 @@ router.post('/', (req, res) => {
   });
 });
 
-router.post('/pantheons', (req, res) => {
+router.post('/pantheons', mod_restricted, (req, res) => {
   const data = req.body;
 
   Kinds.addPantheonConnection(data)
@@ -62,7 +65,7 @@ router.post('/pantheons', (req, res) => {
 })
 
 
-router.put('/:id', (req, res) => {
+router.put('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
@@ -83,7 +86,7 @@ router.put('/:id', (req, res) => {
 });
 
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
       Kinds.remove(id)
       .then(deleted => {
@@ -92,7 +95,7 @@ router.delete('/:id', (req, res) => {
       .catch(err => { res.status(500).json({ message: 'Failed to delete kind' }) });
 });
 
-router.delete('/:kind_id/:pantheon_id', (req, res) => {
+router.delete('/:kind_id/:pantheon_id', mod_restricted, (req, res) => {
   const { kind_id, pantheon_id } = req.params;
       Kinds.removeKindPantheonConnection(kind_id, pantheon_id)
       .then(deleted => {

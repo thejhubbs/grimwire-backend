@@ -2,6 +2,8 @@ const express = require('express');
 
 const Categories = require('./category-model.js');
 
+const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
+
 const router = express.Router();
 
 
@@ -39,7 +41,7 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', mod_restricted, (req, res) => {
   const categoryData = req.body;
 
   Categories.add(categoryData)
@@ -51,7 +53,7 @@ router.post('/', (req, res) => {
   });
 });
 
-router.post('/prereqs', (req, res) => {
+router.post('/prereqs', mod_restricted, (req, res) => {
   const data = req.body;
 
   Categories.addPrereq(data)
@@ -63,7 +65,7 @@ router.post('/prereqs', (req, res) => {
   });
 })
 
-router.post('/kinds', (req, res) => {
+router.post('/kinds', mod_restricted, (req, res) => {
   const data = req.body;
 
   Categories.addKindsConnection(data)
@@ -76,7 +78,7 @@ router.post('/kinds', (req, res) => {
 })
 
 
-router.put('/:id', (req, res) => {
+router.put('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
@@ -97,7 +99,7 @@ router.put('/:id', (req, res) => {
 });
 
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
       Categories.remove(id)
       .then(deleted => {
@@ -106,7 +108,7 @@ router.delete('/:id', (req, res) => {
       .catch(err => { res.status(500).json({ message: 'Failed to delete category' }) });
 });
 
-router.delete('/kinds/:category_id/:kind_id', (req, res) => {
+router.delete('/kinds/:category_id/:kind_id', mod_restricted, (req, res) => {
   const { category_id, kind_id } = req.params;
       Categories.removeKindsConnection(category_id, kind_id)
       .then(deleted => {
@@ -115,7 +117,7 @@ router.delete('/kinds/:category_id/:kind_id', (req, res) => {
       .catch(err => { res.status(500).json({ message: 'Failed to delete category' }) });
 });
 
-router.delete('/prereqs/:category_id/:prereq_id', (req, res) => {
+router.delete('/prereqs/:category_id/:prereq_id', mod_restricted, (req, res) => {
   const { category_id, prereq_id } = req.params;
       Categories.removePrereq(category_id, prereq_id)
       .then(deleted => {

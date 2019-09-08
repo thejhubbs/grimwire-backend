@@ -2,6 +2,8 @@ const express = require('express');
 
 const Symbols = require('./symbol-model.js');
 
+const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
+
 const router = express.Router();
 
 
@@ -39,7 +41,7 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', user_restricted, (req, res) => {
   const symbolData = req.body;
 
   Symbols.add(symbolData)
@@ -51,7 +53,7 @@ router.post('/', (req, res) => {
   });
 });
 
-router.post('/connections', (req, res) => {
+router.post('/connections', user_restricted, (req, res) => {
   const data = req.body;
 
   Symbols.addConnection(data)
@@ -63,7 +65,7 @@ router.post('/connections', (req, res) => {
   });
 })
 
-router.post('/pantheons', (req, res) => {
+router.post('/pantheons', mod_restricted, (req, res) => {
   const data = req.body;
 
   Symbols.addPantheonsConnection(data)
@@ -76,7 +78,7 @@ router.post('/pantheons', (req, res) => {
 })
 
 
-router.put('/:id', (req, res) => {
+router.put('/:id', user_restricted, (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
@@ -97,7 +99,7 @@ router.put('/:id', (req, res) => {
 });
 
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
       Symbols.remove(id)
       .then(deleted => {
@@ -106,7 +108,7 @@ router.delete('/:id', (req, res) => {
       .catch(err => { res.status(500).json({ message: 'Failed to delete symbol' }) });
 });
 
-router.delete('/connections/:connection_id', (req, res) => {
+router.delete('/connections/:connection_id', mod_restricted, (req, res) => {
   const { connection_id } = req.params;
       Symbols.removePantheonsConnection(connection_id)
       .then(deleted => {
@@ -115,7 +117,7 @@ router.delete('/connections/:connection_id', (req, res) => {
       .catch(err => { res.status(500).json({ message: 'Failed to delete symbol' }) });
 });
 
-router.delete('/pantheons/:symbol_pantheon_id', (req, res) => {
+router.delete('/pantheons/:symbol_pantheon_id', mod_restricted, (req, res) => {
   const { symbol_pantheon_id } = req.params;
       Symbols.removeConnection(symbol_pantheon_id)
       .then(deleted => {

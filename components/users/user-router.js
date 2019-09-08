@@ -71,7 +71,7 @@ router.post('/login', (req, res) => {
 });
 
 
-router.put('/:id', mod_restricted, (req, res) => {
+router.put('/:id', profile_restricted, (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
@@ -106,6 +106,21 @@ router.delete('/logout', (req, res) => {
   res.status(200).json({message: "Logged out!"})
 });
 
+function profile_restricted(req, res, next) {
+  const logged_in_user = req.session.user
+  const {id} = req.params
 
+  console.log( req.session.user.user_id , Number.parseInt(id) )
+  if(logged_in_user){
+    if(logged_in_user.role >= 3 || logged_in_user.user_id === Number.parseInt(id)){
+      next();
+    } else {
+      res.status(400).json({message: "You do not have permission to do this."})
+    }
+  } else{
+    res.status(400).json({message: "Please log in."})
+  }
+
+}
 
 module.exports = router;

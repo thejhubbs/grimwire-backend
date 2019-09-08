@@ -2,6 +2,8 @@ const express = require('express');
 
 const Pantheons = require('./pantheon-model.js');
 
+const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
+
 const router = express.Router();
 
 
@@ -39,7 +41,7 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', mod_restricted, (req, res) => {
   const pantheonData = req.body;
 
   Pantheons.add(pantheonData)
@@ -52,7 +54,7 @@ router.post('/', (req, res) => {
 });
 
 
-router.post('/history', (req, res) => {
+router.post('/history', mod_restricted, (req, res) => {
   const data = req.body;
 
   Pantheons.addHistory(data)
@@ -65,7 +67,7 @@ router.post('/history', (req, res) => {
 });
 
 
-router.put('/:id', (req, res) => {
+router.put('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
   const changes = req.body;
 
@@ -87,7 +89,7 @@ router.put('/:id', (req, res) => {
 
 
 //First, remove all histories, then delete the pantheon record itself.
-router.delete('/:id', (req, res) => {
+router.delete('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
 
   Pantheons.removeHistoriesById(id)
@@ -102,7 +104,7 @@ router.delete('/:id', (req, res) => {
 });
 
 //First, remove all histories, then delete the pantheon record itself.
-router.delete('/history/:history_id', (req, res) => {
+router.delete('/history/:history_id', mod_restricted, (req, res) => {
   const { history_id } = req.params;
 
   Pantheons.removeHistory(history_id)
