@@ -28,7 +28,9 @@ router.get('/:id', (req, res) => {
           Symbols.getThumbnail(id).then(thumbnail => {
               Symbols.findPantheonsBySymbolId(id).then(pantheons => {
                   Symbols.findConnectionsBySymbolId(id).then(connections => {
-                      res.json({...symbol, thumbnail, images, pantheons, connections})
+                      Symbols.findKind(symbol.symbol_kind_id).then(kind => {
+                          res.json({...symbol, thumbnail, images, pantheons, connections, kind})
+                      }).catch(err => {res.status(500).json({ message: 'Failed to get kind.' })});
                   }).catch(err => {res.status(500).json({ message: 'Failed to get prereqs.' })});
               }).catch(err => {res.status(500).json({ message: 'Failed to get kinds.' })});
           }).catch(err => {res.status(500).json({ message: 'Failed to get thumbnail.' })});

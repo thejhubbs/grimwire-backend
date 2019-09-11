@@ -28,7 +28,11 @@ router.get('/:id', (req, res) => {
           Pantheons.influencedById(id).then(influenced => {
               Pantheons.getImages(id).then(images => {
                   Pantheons.getThumbnail(id).then(thumbnail => {
-                    res.json({...pantheon, history, influenced, thumbnail, images})
+                    Pantheons.getCreatedKinds(id).then(created_kinds => {
+                        Pantheons.getUsesKinds(id).then(uses_kinds => {
+                          res.json({...pantheon, history, influenced, thumbnail, images, created_kinds, uses_kinds})
+                        }).catch(err => {res.status(500).json({ message: 'Failed to get images.' })});
+                    }).catch(err => {res.status(500).json({ message: 'Failed to get images.' })});
                   }).catch(err => {res.status(500).json({ message: 'Failed to get images.' })});
               }).catch(err => {res.status(500).json({ message: 'Failed to get images.' })});
           }).catch(err => {res.status(500).json({ message: 'Failed to get influenced.' })});

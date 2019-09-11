@@ -5,6 +5,8 @@ module.exports = {
   findById,
   historyById,
   influencedById,
+  getCreatedKinds,
+  getUsesKinds,
   getImages,
   getThumbnail,
   add,
@@ -41,6 +43,17 @@ function influencedById(id) {
   .select('pantheon_history_id','pantheon_id', 'pantheon_name', 'pantheon_description', 'start_year', 'end_year')
   .join('pantheons', 'pantheons_history.influenced_id', 'pantheons.pantheon_id')
   .where('influencer_id', id)
+}
+
+function getCreatedKinds(id) {
+  return db('kinds')
+  .where('creator_pantheon_id', id)
+}
+
+function getUsesKinds(id) {
+  return db('kinds_to_pantheons')
+  .join('kinds', 'kinds_to_pantheons.kp_kind_id', 'kinds.kind_id')
+  .where('kp_pantheon_id', id)
 }
 
 function getImages(id) {

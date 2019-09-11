@@ -4,6 +4,7 @@ module.exports = {
   find,
   findById,
   findPantheonsByKindId,
+  getSymbols,
   getImages,
   getThumbnail,
   add,
@@ -24,6 +25,10 @@ function findById(id) {
     .join('pantheons', 'pantheon_id', '=', 'creator_pantheon_id')
     .where( 'kind_id', id )
     .first();
+}
+
+function getSymbols(id) {
+  return db('symbols').where('symbol_kind_id', id)
 }
 
 function findPantheonsByKindId(id) {

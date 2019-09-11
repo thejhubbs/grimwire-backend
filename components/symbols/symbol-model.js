@@ -5,6 +5,7 @@ module.exports = {
   findById,
   findPantheonsBySymbolId,
   findConnectionsBySymbolId,
+  findKind,
   getImages,
   getThumbnail,
   add,
@@ -38,6 +39,10 @@ function findConnectionsBySymbolId(id) {
   return db('symbol_connections')
     .join('symbols', 'symbol_connections.connected_symbol_id', 'symbols.symbol_id')
     .where('main_symbol_id', id)
+}
+
+function findKind(kind_id) {
+  return db('kinds').where('kind_id', kind_id).first()
 }
 
 function getImages(id) {

@@ -28,7 +28,9 @@ router.get('/:id', (req, res) => {
       Kinds.getImages(id).then(images => {
           Kinds.getThumbnail(id).then(thumbnail => {
             Kinds.findPantheonsByKindId(id).then(pantheons => {
-              res.json({...kind, thumbnail, images, pantheons})
+              Kinds.getSymbols(id).then(symbols => {
+                res.json({...kind, default_extra_info: JSON.parse(kind.default_extra_info), thumbnail, images, pantheons, symbols})
+              }).catch(err => {res.status(500).json({ message: 'Failed to get pantheons.' })});
             }).catch(err => {res.status(500).json({ message: 'Failed to get pantheons.' })});
           }).catch(err => {res.status(500).json({ message: 'Failed to get images.' })});
       }).catch(err => {res.status(500).json({ message: 'Failed to get images.' })});

@@ -1,6 +1,5 @@
 const express = require('express');
 
-
 const ImageRouter = require('./components/images/image-router.js');
 const PantheonRouter = require('./components/pantheons/pantheon-router.js');
 const KindRouter = require('./components/kinds/kind-router.js');
@@ -10,6 +9,8 @@ const UserRouter = require('./components/users/user-router.js');
 
 const server = express();
 const session = require('express-session');
+const cors = require('cors')
+server.use(cors());
 
 server.use(
   session({
