@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/', (req, res) => {
   Symbols.find()
   .then(symbols => {
-    res.json(symbols);
+    res.json(symbols.map(item => item.extra_info = JSON.parse(item.extra_info)));
   })
   .catch(err => {
     res.status(500).json({ message: 'Failed to get symbols' });
@@ -29,7 +29,17 @@ router.get('/:id', (req, res) => {
               Symbols.findPantheonsBySymbolId(id).then(pantheons => {
                   Symbols.findConnectionsBySymbolId(id).then(connections => {
                       Symbols.findKind(symbol.symbol_kind_id).then(kind => {
-                          res.json({...symbol, thumbnail, images, pantheons, connections, kind})
+                          res.json(
+                            {
+                              ...symbol,
+                              extra_info: JSON.parse(symbol.extra_info),
+                              thumbnail,
+                              images,
+                              pantheons,
+                              connections,
+                              kind: {...kind, default_extra_info: JSON.parse(kind.default_extra_info) }
+                            }
+                          )
                       }).catch(err => {res.status(500).json({ message: 'Failed to get kind.' })});
                   }).catch(err => {res.status(500).json({ message: 'Failed to get prereqs.' })});
               }).catch(err => {res.status(500).json({ message: 'Failed to get kinds.' })});

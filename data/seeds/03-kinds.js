@@ -5,6 +5,7 @@ exports.seed = function(knex) {
 
 
   return knex('kinds').insert([
+    //1
     {
     kind_name: "Tarot Cards",
     creator_pantheon_id: 10,
@@ -14,6 +15,7 @@ exports.seed = function(knex) {
     total_number: 78,
     default_extra_info: JSON.stringify({"suit": ""})
     },
+    //2
     {
     kind_name: "Hebrew Letters",
     creator_pantheon_id: 2,
@@ -23,6 +25,7 @@ exports.seed = function(knex) {
     total_number: 22,
     default_extra_info: JSON.stringify({"sound": "", "value": "", "meaning": ""})
     },
+    //3
     {
     kind_name: "Astrological Signs",
     creator_pantheon_id: 10,
@@ -32,6 +35,7 @@ exports.seed = function(knex) {
     total_number: 78,
     default_extra_info: JSON.stringify({"mutability": "", "element": "", "symbol": "", "dates": ""})
     },
+    //4
     {
     kind_name: "Chakras",
     creator_pantheon_id: 10,
@@ -41,6 +45,7 @@ exports.seed = function(knex) {
     total_number: 7,
     default_extra_info: JSON.stringify({"location": ""})
     },
+    //5
     {
     kind_name: "Dieties",
     creator_pantheon_id: 10,

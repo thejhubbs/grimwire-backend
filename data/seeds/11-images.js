@@ -4,7 +4,7 @@ exports.seed = function(knex) {
 
   ["Pantheon", "Kind", "Category", "Symbol"].map(item => {
     const array = []
-    for(var i = 1; i < 10; i++){
+    for(var i = 1; i < 20; i++){
       big_array.push( {
           foreign_id: i,
           foreign_class: item,
