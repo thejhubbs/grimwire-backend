@@ -5,7 +5,8 @@ exports.up = function(knex, Promise) {
       tbl.increments('category_id');
       tbl.text('category_name',128).unique().notNullable();
       tbl.text('category_description',128);
-      tbl.text('category_overview');
+      tbl.text('category_overview_text');
+      tbl.text('category_sources_text');
       tbl.integer('category_number');
     })
     .createTable('category_prerequisites', tbl => {

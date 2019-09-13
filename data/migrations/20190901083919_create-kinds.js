@@ -4,7 +4,8 @@ exports.up = function(knex, Promise) {
       tbl.increments('kind_id');
       tbl.text('kind_name',128).unique().notNullable();
       tbl.text('kind_description',128);
-      tbl.text('kind_overview');
+      tbl.text('kind_application_theory_text');
+      tbl.text('kind_background_history_text');
       tbl.integer('creator_pantheon_id')
         .unsigned()
         .notNullable()

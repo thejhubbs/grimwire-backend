@@ -11,7 +11,12 @@ const router = express.Router();
 router.get('/', (req, res) => {
   Kinds.find()
   .then(kinds => {
-    res.json(kinds);
+    res.json(kinds.map(kind =>
+      ({
+        ...kind,
+        specific_order: kind.specific_order === 1 ? true : false
+      })
+    ));
   })
   .catch(err => {
     res.status(500).json({ message: 'Failed to get kinds' });
@@ -32,6 +37,7 @@ router.get('/:id', (req, res) => {
                 res.json(
                   {
                     ...kind,
+                    specific_order: kind.specific_order === 1 ? true : false,
                     default_extra_info: JSON.parse(kind.default_extra_info),
                     thumbnail,
                     images,

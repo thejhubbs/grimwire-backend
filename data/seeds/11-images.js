@@ -2,12 +2,12 @@
 exports.seed = function(knex) {
   const big_array = [];
 
-  ["Pantheon", "Kind", "Category", "Symbol"].map(item => {
+  ["Pantheon", "Kind", "Category", "Symbol"].map(it => {
     const array = []
-    for(var i = 1; i < 20; i++){
+    for(var i = 1; i < 14; i++){
       big_array.push( {
           foreign_id: i,
-          foreign_class: item,
+          foreign_class: it,
           image_url: "1567961920055alcohol-bar-beer-1283219.jpg",
           thumbnail: 1,
           image_title: "The Thumbnail of this object",
@@ -15,7 +15,7 @@ exports.seed = function(knex) {
       } )
       big_array.push( {
           foreign_id: i,
-          foreign_class: item,
+          foreign_class: it,
           image_url: "1567961920055alcohol-bar-beer-1283219.jpg",
           thumbnail: 0,
           image_title: "The Thumbnail of this object",
@@ -23,7 +23,7 @@ exports.seed = function(knex) {
       } )
       big_array.push( {
           foreign_id: i,
-          foreign_class: item,
+          foreign_class: it,
           image_url: "1567961920055alcohol-bar-beer-1283219.jpg",
           thumbnail: 0,
           image_title: "The Thumbnail of this object",
