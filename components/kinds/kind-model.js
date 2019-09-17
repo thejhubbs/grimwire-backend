@@ -9,6 +9,7 @@ module.exports = {
   getThumbnail,
   add,
   addPantheonConnection,
+  editPantheonConnection,
   update,
   remove,
   removeKindPantheonConnection
@@ -48,17 +49,17 @@ function getThumbnail(id) {
 function add(kind) {
   return db('kinds')
     .insert(kind)
-    .then(ids => {
-      return "Success";
-    });
 }
 
 function addPantheonConnection(kind) {
   return db('kinds_to_pantheons')
     .insert(kind)
-    .then(ids => {
-      return "Success";
-    });
+}
+
+function editPantheonConnection(changes, id) {
+  return db('kinds_to_pantheons')
+    .where('kinds_to_pantheons_id', id)
+    .update(changes);
 }
 
 function update(changes, id) {
@@ -73,9 +74,8 @@ function remove(id) {
     .del();
 }
 
-function removeKindPantheonConnection(kind_id, pantheon_id) {
+function removeKindPantheonConnection(kp_id) {
   return db('kinds_to_pantheons')
-    .where( 'kind_id', kind_id )
-    .where('pantheon_id', pantheon_id )
+    .where( 'kinds_to_pantheons_id', kp_id )
     .del();
 }

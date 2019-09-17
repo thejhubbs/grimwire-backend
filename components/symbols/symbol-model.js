@@ -21,6 +21,9 @@ module.exports = {
 
 function find() {
   return db('symbols')
+  .join('images', 'symbols.symbol_id', 'images.foreign_id')
+  .where('foreign_class', "Symbol")
+  .where('thumbnail', 1)
 }
 
 function findById(id) {

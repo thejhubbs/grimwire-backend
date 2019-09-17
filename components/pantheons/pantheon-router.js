@@ -10,7 +10,16 @@ const router = express.Router();
 router.get('/', (req, res) => {
   Pantheons.find()
   .then(pantheons => {
-    res.json(pantheons);
+    res.json(pantheons.map(pantheon => ({
+      ...pantheon,
+      thumbnail: {
+        image_url: pantheon.image_url,
+        thumbnail: pantheon.thumbnail,
+        image_title: pantheon.image_title,
+        image_description: pantheon.image_description,
+        image_id: pantheon.image_id
+      }
+    })));
   })
   .catch(err => {
     res.status(500).json({ message: 'Failed to get pantheons' });
@@ -62,14 +71,39 @@ router.post('/history', mod_restricted, (req, res) => {
   const data = req.body;
 
   Pantheons.addHistory(data)
-  .then(pantheon => {
-    res.status(201).json(pantheon);
+  .then(history_id => {
+    Pantheons.findByHistoryId(history_id)
+      .then(editpantheon => {
+        res.status(201).json(editpantheon);
+      })
+      .catch(err => {
+        res.status(500).json({ message: 'Failed to create new history' });
+      })
   })
   .catch (err => {
     res.status(500).json({ message: 'Failed to create new history' });
   });
 });
 
+router.put('/history/:id', mod_restricted, (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  Pantheons.editHistory(data, id)
+  .then(pantheon => {
+    Pantheons.findByHistoryId(id)
+      .then(newpantheon => {
+        res.status(201).json(newpantheon);
+      })
+      .catch(err => {
+        res.status(500).json({ message: 'Failed to create new history' });
+      })
+
+  })
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to create new history' });
+  });
+});
 
 router.put('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;

@@ -84,6 +84,19 @@ router.post('/pantheons', mod_restricted, (req, res) => {
   });
 })
 
+router.put('/pantheons/:id', mod_restricted, (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  Kinds.editPantheonConnection(data, id)
+  .then(kind => {
+    res.status(201).json(kind);
+  })
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to create new connection' });
+  });
+})
+
 
 router.put('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
@@ -115,9 +128,9 @@ router.delete('/:id', mod_restricted, (req, res) => {
       .catch(err => { res.status(500).json({ message: 'Failed to delete kind' }) });
 });
 
-router.delete('/:kind_id/:pantheon_id', mod_restricted, (req, res) => {
-  const { kind_id, pantheon_id } = req.params;
-      Kinds.removeKindPantheonConnection(kind_id, pantheon_id)
+router.delete('/pantheons/:kp_id', mod_restricted, (req, res) => {
+  const { kp_id } = req.params;
+      Kinds.removeKindPantheonConnection(kp_id)
       .then(deleted => {
         res.send("Success.")
       })

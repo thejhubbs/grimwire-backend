@@ -3,6 +3,7 @@ const db = require('../../data/dbConfig.js');
 module.exports = {
   find,
   findById,
+  findByHistoryId,
   historyById,
   influencedById,
   getCreatedKinds,
@@ -11,6 +12,7 @@ module.exports = {
   getThumbnail,
   add,
   addHistory,
+  editHistory,
   update,
   remove,
   removeHistoriesById,
@@ -21,6 +23,9 @@ module.exports = {
 
 function find() {
   return db('pantheons')
+  .join('images', 'pantheons.pantheon_id', 'images.foreign_id')
+  .where('foreign_class', "Pantheon")
+  .where('thumbnail', 1)
 }
 
 function findById(id) {
@@ -29,10 +34,16 @@ function findById(id) {
     .first();
 }
 
+function findByHistoryId(id) {
+  return db('pantheons_history')
+    .where( 'pantheon_history_id', id )
+    .first();
+}
+
 //Returns an array of simple pantheon objects based on the provided id. Only returns short fields, no longtext fields.
 function historyById(id) {
   return db('pantheons_history')
-  .select('pantheon_history_id', 'pantheon_id', 'pantheon_name', 'pantheon_description', 'start_year', 'end_year')
+  .select('pantheon_history_id', 'influenced_id', 'influencer_id', 'pantheon_id', 'pantheon_name', 'pantheon_description', 'start_year', 'end_year')
   .join('pantheons', 'pantheons_history.influencer_id', 'pantheons.pantheon_id')
   .where('influenced_id', id)
 }
@@ -40,7 +51,7 @@ function historyById(id) {
 //Returns an array of simple pantheon objects based on the provided id. Only returns short fields, no longtext fields.
 function influencedById(id) {
   return db('pantheons_history')
-  .select('pantheon_history_id','pantheon_id', 'pantheon_name', 'pantheon_description', 'start_year', 'end_year')
+  .select('pantheon_history_id', 'influenced_id', 'influencer_id', 'pantheon_id', 'pantheon_name', 'pantheon_description', 'start_year', 'end_year')
   .join('pantheons', 'pantheons_history.influenced_id', 'pantheons.pantheon_id')
   .where('influencer_id', id)
 }
@@ -73,11 +84,15 @@ function add(pantheon) {
 }
 
 function addHistory(data) {
-  return db('pantheons_history')
+    return db('pantheons_history')
     .insert(data)
     .then(ids => {
-      return "Success."
+      return ids[0]
     });
+}
+
+function editHistory(data, id) {
+   return db('pantheons_history').where('pantheon_history_id', id).update(data);
 }
 
 function update(changes, id) {

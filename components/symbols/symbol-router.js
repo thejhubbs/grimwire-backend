@@ -10,7 +10,19 @@ const router = express.Router();
 router.get('/', (req, res) => {
   Symbols.find()
   .then(symbols => {
-    res.json(symbols.map(item => item.extra_info = JSON.parse(item.extra_info)));
+    res.json(
+      symbols.map(item => ({
+        ...item,
+        extra_info: JSON.parse(item.extra_info),
+        thumbnail: {
+          image_url: item.image_url,
+          thumbnail: item.thumbnail,
+          image_title: item.image_title,
+          image_description: item.image_description,
+          image_id: item.image_id
+        }
+      })
+    ));
   })
   .catch(err => {
     res.status(500).json({ message: 'Failed to get symbols' });
