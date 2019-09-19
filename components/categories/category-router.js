@@ -98,6 +98,41 @@ router.put('/:id', mod_restricted, (req, res) => {
   });
 });
 
+router.put('/kinds/:id', mod_restricted, (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  Categories.editKindsConnection(changes, id)
+  .then(category => {
+    if (category) {
+      res.json(category);
+    } else {
+      res.status(404).json({ message: 'Could not find category with given id' });
+    }
+  })
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to update category' });
+  });
+});
+
+router.put('/prereqs/:id', mod_restricted, (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  Categories.editPrereq(changes, id)
+  .then(category => {
+    if (category) {
+      res.json(category);
+    } else {
+      res.status(404).json({ message: 'Could not find category with given id' });
+    }
+  })
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to update category' });
+  });
+});
+
+
 
 router.delete('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
@@ -108,18 +143,18 @@ router.delete('/:id', mod_restricted, (req, res) => {
       .catch(err => { res.status(500).json({ message: 'Failed to delete category' }) });
 });
 
-router.delete('/kinds/:category_id/:kind_id', mod_restricted, (req, res) => {
-  const { category_id, kind_id } = req.params;
-      Categories.removeKindsConnection(category_id, kind_id)
+router.delete('/kinds/:ck_id', mod_restricted, (req, res) => {
+  const { ck_id } = req.params;
+      Categories.removeKindsConnection(ck_id)
       .then(deleted => {
         res.send("Success.")
       })
       .catch(err => { res.status(500).json({ message: 'Failed to delete category' }) });
 });
 
-router.delete('/prereqs/:category_id/:prereq_id', mod_restricted, (req, res) => {
-  const { category_id, prereq_id } = req.params;
-      Categories.removePrereq(category_id, prereq_id)
+router.delete('/prereqs/:prereq_id', mod_restricted, (req, res) => {
+  const { prereq_id } = req.params;
+      Categories.removePrereq(prereq_id)
       .then(deleted => {
         res.send("Success.")
       })

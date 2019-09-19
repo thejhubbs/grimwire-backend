@@ -122,6 +122,39 @@ router.put('/:id', user_restricted, (req, res) => {
   });
 });
 
+router.put('/connections/:id', user_restricted, (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  Symbols.editConnection(changes, id)
+  .then(symbol => {
+    if (symbol) {
+      res.json(symbol)
+    } else {
+      res.status(404).json({ message: 'Could not find symbol with given id' });
+    }
+  })
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to update symbol' });
+  });
+});
+
+router.put('/pantheons/:id', user_restricted, (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  Symbols.editPantheonsConnection(changes, id)
+  .then(symbol => {
+    if (symbol) {
+      res.json(symbol);
+    } else {
+      res.status(404).json({ message: 'Could not find symbol with given id' });
+    }
+  })
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to update symbol' });
+  });
+});
 
 router.delete('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
