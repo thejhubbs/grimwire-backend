@@ -17,8 +17,10 @@ module.exports = {
 
 
 
-function find() {
+function find(sort, sortdir, searchTerm) {
   return db('kinds')
+  .orderBy(sort, sortdir)
+  .where('kind_name', 'like', `%${searchTerm}%`)
 }
 
 function findById(id) {

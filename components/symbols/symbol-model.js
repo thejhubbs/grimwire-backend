@@ -21,10 +21,12 @@ module.exports = {
 
 
 
-function find() {
+function find(sort, sortdir, searchTerm) {
   return db('symbols')
+  .orderBy(sort, sortdir)
   .join('images', 'symbols.symbol_id', 'images.foreign_id')
   .where('foreign_class', "Symbol")
+  .where('symbol_name', 'like', `%${searchTerm}%`)
   .where('thumbnail', 1)
 }
 

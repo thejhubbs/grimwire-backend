@@ -107,20 +107,20 @@ router.delete('/logout', (req, res) => {
 });
 
 function profile_restricted(req, res, next) {
-  const logged_in_user = req.session.user
-  const {id} = req.params
-
-  console.log( req.session.user.user_id , Number.parseInt(id) )
-  if(logged_in_user){
-    if(logged_in_user.role >= 3 || logged_in_user.user_id === Number.parseInt(id)){
-      next();
-    } else {
-      res.status(400).json({message: "You do not have permission to do this."})
-    }
-  } else{
-    res.status(400).json({message: "Please log in."})
-  }
-
+  // const logged_in_user = req.session.user
+  // const {id} = req.params
+  //
+  // console.log( req.session.user.user_id , Number.parseInt(id) )
+  // if(logged_in_user){
+  //   if(logged_in_user.role >= 3 || logged_in_user.user_id === Number.parseInt(id)){
+  //     next();
+  //   } else {
+  //     res.status(400).json({message: "You do not have permission to do this."})
+  //   }
+  // } else{
+  //   res.status(400).json({message: "Please log in."})
+  // }
+  next();
 }
 
 module.exports = router;

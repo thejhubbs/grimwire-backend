@@ -1,5 +1,5 @@
 const express = require('express');
-
+const paginate = require('jw-paginate')
 const Kinds = require('./kind-model.js');
 
 const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
@@ -9,14 +9,31 @@ const router = express.Router();
 
 
 router.get('/', (req, res) => {
-  Kinds.find()
+  const sort = req.query.sort || "kind_name"
+  const sortdir = req.query.sortdir || "ASC"
+  const searchTerm = req.query.search || ""
+
+  Kinds.find(sort, sortdir, searchTerm)
   .then(kinds => {
-    res.json(kinds.map(kind =>
-      ({
+    const items = kinds
+    console.log(kinds)
+    // get page from query params or default to first page
+    const page = parseInt(req.query.page) || 1;
+
+    // get pager object for specified page
+    const pageSize = 10;
+    const pager = paginate(items.length, page, pageSize);
+
+    // get page of items from items array
+    const pageOfItems = items.slice(pager.startIndex, pager.endIndex + 1);
+
+    // return pager object and current page of items
+    return res.json({ pager, pageOfItems: pageOfItems.map(
+      kind => ({
         ...kind,
         specific_order: kind.specific_order === 1 ? true : false
       })
-    ));
+    )});
   })
   .catch(err => {
     res.status(500).json({ message: 'Failed to get kinds' });
