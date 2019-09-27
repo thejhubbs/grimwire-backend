@@ -1,4 +1,5 @@
 const express = require('express');
+const paginate = require('jw-paginate');
 
 const Categories = require('./category-model.js');
 
@@ -8,9 +9,26 @@ const router = express.Router();
 
 
 router.get('/', (req, res) => {
-  Categories.find()
+  const sort = req.query.sort || "category_name"
+  const sortdir = req.query.sortdir || "ASC"
+  const searchTerm = req.query.search || ""
+
+  Categories.find(sort, sortdir, searchTerm)
   .then(categories => {
-    res.json(categories);
+    const items = categories
+
+    // get page from query params or default to first page
+    const page = parseInt(req.query.page) || 1;
+
+    // get pager object for specified page
+    const pageSize = 10;
+    const pager = paginate(items.length, page, pageSize);
+
+    // get page of items from items array
+    const pageOfItems = items.slice(pager.startIndex, pager.endIndex + 1);
+
+    // return pager object and current page of items
+    return res.json({ pager, pageOfItems });
   })
   .catch(err => {
     res.status(500).json({ message: 'Failed to get categories' });
@@ -98,6 +116,41 @@ router.put('/:id', mod_restricted, (req, res) => {
   });
 });
 
+router.put('/kinds/:id', mod_restricted, (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  Categories.editKindsConnection(changes, id)
+  .then(category => {
+    if (category) {
+      res.json(category);
+    } else {
+      res.status(404).json({ message: 'Could not find category with given id' });
+    }
+  })
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to update category' });
+  });
+});
+
+router.put('/prereqs/:id', mod_restricted, (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  Categories.editPrereq(changes, id)
+  .then(category => {
+    if (category) {
+      res.json(category);
+    } else {
+      res.status(404).json({ message: 'Could not find category with given id' });
+    }
+  })
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to update category' });
+  });
+});
+
+
 
 router.delete('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;
@@ -108,18 +161,18 @@ router.delete('/:id', mod_restricted, (req, res) => {
       .catch(err => { res.status(500).json({ message: 'Failed to delete category' }) });
 });
 
-router.delete('/kinds/:category_id/:kind_id', mod_restricted, (req, res) => {
-  const { category_id, kind_id } = req.params;
-      Categories.removeKindsConnection(category_id, kind_id)
+router.delete('/kinds/:ck_id', mod_restricted, (req, res) => {
+  const { ck_id } = req.params;
+      Categories.removeKindsConnection(ck_id)
       .then(deleted => {
         res.send("Success.")
       })
       .catch(err => { res.status(500).json({ message: 'Failed to delete category' }) });
 });
 
-router.delete('/prereqs/:category_id/:prereq_id', mod_restricted, (req, res) => {
-  const { category_id, prereq_id } = req.params;
-      Categories.removePrereq(category_id, prereq_id)
+router.delete('/prereqs/:prereq_id', mod_restricted, (req, res) => {
+  const { prereq_id } = req.params;
+      Categories.removePrereq(prereq_id)
       .then(deleted => {
         res.send("Success.")
       })

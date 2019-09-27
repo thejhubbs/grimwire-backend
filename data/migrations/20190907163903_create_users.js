@@ -4,12 +4,12 @@ exports.up = function(knex, Promise) {
       tbl.increments('user_id');
       tbl.text('password', 128).notNullable();
       tbl.text('username', 32).notNullable().unique();
-      tbl.text('email', 128).notNullable().unique();
-      tbl.text('bio');
-      tbl.text('link', 128);
-      tbl.text('link_description');
-      tbl.integer('role');
-      tbl.boolean('verified');
+      tbl.text('user_email', 128).notNullable().unique();
+      tbl.text('user_bio');
+      tbl.text('user_link', 128);
+      tbl.text('user_link_description');
+      tbl.integer('user_role');
+      tbl.boolean('user_verified');
     })
 
 };

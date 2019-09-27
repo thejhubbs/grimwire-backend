@@ -1,26 +1,12 @@
-// SymbolToPantheons- which pantheons use which symbol
-//   SymbolPantheonId //primary key
-//   PantheonId //foreign Key
-//   SymbolId //foreign Key
-//
-// ******
-// Connection- has one information
-//   ConnectionId: //primary key
-//   MainSymbolId: //Foreign key
-//   ConnectedSymbolId: //Foreign key
-//   relationship: integer
-//   strength: integer
-
-
 exports.up = function(knex, Promise) {
   return knex.schema
     .createTable('symbols', tbl => {
       tbl.increments('symbol_id');
       tbl.text('symbol_name',128).unique().notNullable();
       tbl.text('symbol_description',128);
-      tbl.text('symbol_overview');
+      tbl.text('symbol_overview_text');
+      tbl.text('symbol_meaning_text');
       tbl.text('other_spellings');
-      tbl.text('meaning_text');
       tbl.integer('symbol_kind_id')
         .unsigned()
         .notNullable()

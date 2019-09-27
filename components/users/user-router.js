@@ -3,6 +3,8 @@ const express = require('express');
 const Users = require('./user-model.js');
 
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const secrets = require('../../config/secrets.js');
 
 const {user_restricted, mod_restricted, admin_restricted} = require('../middleware.js')
 
@@ -59,8 +61,8 @@ router.post('/login', (req, res) => {
   Users.findByUsername(username)
   .then(user => {
     if(user && bcrypt.compareSync(password, user.password)){
-      req.session.user = user
-      res.status(200).json({message: "Welcome!"})
+      const token = generateToken(user)
+      res.status(200).json({message: "Welcome!", token: token, user: user})
     } else {
       res.status(500).json({message: "Invalid Credentials."})
     }
@@ -107,20 +109,34 @@ router.delete('/logout', (req, res) => {
 });
 
 function profile_restricted(req, res, next) {
-  const logged_in_user = req.session.user
-  const {id} = req.params
+  // const logged_in_user = req.session.user
+  // const {id} = req.params
+  //
+  // console.log( req.session.user.user_id , Number.parseInt(id) )
+  // if(logged_in_user){
+  //   if(logged_in_user.role >= 3 || logged_in_user.user_id === Number.parseInt(id)){
+  //     next();
+  //   } else {
+  //     res.status(400).json({message: "You do not have permission to do this."})
+  //   }
+  // } else{
+  //   res.status(400).json({message: "Please log in."})
+  // }
+  next();
+}
 
-  console.log( req.session.user.user_id , Number.parseInt(id) )
-  if(logged_in_user){
-    if(logged_in_user.role >= 3 || logged_in_user.user_id === Number.parseInt(id)){
-      next();
-    } else {
-      res.status(400).json({message: "You do not have permission to do this."})
-    }
-  } else{
-    res.status(400).json({message: "Please log in."})
-  }
+function generateToken(user) {
+  const payload = {
+    subject: user.id, // sub in payload is what the token is about
+    user: user
+  };
 
+  const options = {
+    expiresIn: '1d', // show other available options in the library's documentation
+  };
+
+  // extract the secret away so it can be required and used where needed
+  return jwt.sign(payload, process.env.JWT_SECRET, options); // this method is synchronous
 }
 
 module.exports = router;

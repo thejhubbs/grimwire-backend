@@ -11,6 +11,8 @@ module.exports = {
   add,
   addPantheonsConnection,
   addConnection,
+  editPantheonsConnection,
+  editConnection,
   update,
   remove,
   removePantheonsConnection,
@@ -19,8 +21,13 @@ module.exports = {
 
 
 
-function find() {
+function find(sort, sortdir, searchTerm) {
   return db('symbols')
+  .orderBy(sort, sortdir)
+  .join('images', 'symbols.symbol_id', 'images.foreign_id')
+  .where('foreign_class', "Symbol")
+  .where('symbol_name', 'like', `%${searchTerm}%`)
+  .where('thumbnail', 1)
 }
 
 function findById(id) {
@@ -75,6 +82,18 @@ function addConnection(connection) {
     .then(ids => {
       return "Success";
     });
+}
+
+function editPantheonsConnection(symbol_pantheon, id) {
+  return db('symbol_to_pantheons')
+    .where('symbol_pantheon_id', id)
+    .update(symbol_pantheon);
+}
+
+function editConnection(connection, id) {
+  return db('symbol_connections')
+    .where('symbol_connection_id', id)
+    .update(connection);
 }
 
 function update(changes, id) {

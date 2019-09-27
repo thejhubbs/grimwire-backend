@@ -10,6 +10,8 @@ module.exports = {
   add,
   addKindsConnection,
   addPrereq,
+  editKindsConnection,
+  editPrereq,
   update,
   remove,
   removeKindsConnection,
@@ -18,8 +20,10 @@ module.exports = {
 
 
 
-function find() {
+function find(sort, sortdir, searchTerm) {
   return db('categories')
+  .orderBy(sort, sortdir)
+  .where('category_name', 'like', `%${searchTerm}%`)
 }
 
 function findById(id) {
@@ -72,6 +76,18 @@ function addPrereq(prereq) {
     });
 }
 
+function editKindsConnection(data, id) {
+  return db('category_to_kinds')
+    .where('category_kind_id', id)
+    .update(data);
+}
+
+function editPrereq(data, id) {
+  return db('category_prerequisites')
+    .where('category_prereq_id', id)
+    .update(data);
+}
+
 function update(changes, id) {
   return db('categories')
     .where('category_id', id)
@@ -84,16 +100,14 @@ function remove(id) {
     .del();
 }
 
-function removeKindsConnection(category_id, kind_id) {
+function removeKindsConnection(ck_id) {
   return db('category_to_kinds')
-    .where( 'ck_category_id', category_id )
-    .where('ck_kind_id', kind_id )
+    .where( 'category_kind_id', ck_id )
     .del();
 }
 
-function removePrereq(category_id, prereq_id) {
+function removePrereq(prereq_id) {
   return db('category_prerequisites')
-    .where( 'cp_category_id', category_id )
-    .where('cp_prereq_id', prereq_id )
+    .where('category_prereq_id', prereq_id )
     .del();
 }

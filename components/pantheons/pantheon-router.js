@@ -1,4 +1,5 @@
 const express = require('express');
+const paginate = require('jw-paginate')
 
 const Pantheons = require('./pantheon-model.js');
 
@@ -8,9 +9,38 @@ const router = express.Router();
 
 
 router.get('/', (req, res) => {
-  Pantheons.find()
+  const sort = req.query.sort || "pantheon_name"
+  const sortdir = req.query.sortdir || "ASC"
+  const searchTerm = req.query.search || ""
+
+  Pantheons.find(sort, sortdir, searchTerm)
   .then(pantheons => {
-    res.json(pantheons);
+    const items = pantheons
+
+    // get page from query params or default to first page
+    const page = parseInt(req.query.page) || 1;
+
+    // get pager object for specified page
+    const pageSize = 10;
+    const pager = paginate(items.length, page, pageSize);
+
+    // get page of items from items array
+    const pageOfItems = items.slice(pager.startIndex, pager.endIndex + 1);
+
+    // return pager object and current page of items
+    return res.json({ pager, pageOfItems: pageOfItems.map(
+      pantheon => ({
+        ...pantheon,
+        thumbnail: {
+          image_url: pantheon.image_url,
+          thumbnail: pantheon.thumbnail,
+          image_title: pantheon.image_title,
+          image_description: pantheon.image_description,
+          image_id: pantheon.image_id
+        }
+      })
+    )});
+
   })
   .catch(err => {
     res.status(500).json({ message: 'Failed to get pantheons' });
@@ -62,14 +92,39 @@ router.post('/history', mod_restricted, (req, res) => {
   const data = req.body;
 
   Pantheons.addHistory(data)
-  .then(pantheon => {
-    res.status(201).json(pantheon);
+  .then(history_id => {
+    Pantheons.findByHistoryId(history_id)
+      .then(editpantheon => {
+        res.status(201).json(editpantheon);
+      })
+      .catch(err => {
+        res.status(500).json({ message: 'Failed to create new history' });
+      })
   })
   .catch (err => {
     res.status(500).json({ message: 'Failed to create new history' });
   });
 });
 
+router.put('/history/:id', mod_restricted, (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  Pantheons.editHistory(data, id)
+  .then(pantheon => {
+    Pantheons.findByHistoryId(id)
+      .then(newpantheon => {
+        res.status(201).json(newpantheon);
+      })
+      .catch(err => {
+        res.status(500).json({ message: 'Failed to create new history' });
+      })
+
+  })
+  .catch (err => {
+    res.status(500).json({ message: 'Failed to create new history' });
+  });
+});
 
 router.put('/:id', mod_restricted, (req, res) => {
   const { id } = req.params;

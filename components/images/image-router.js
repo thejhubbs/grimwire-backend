@@ -57,12 +57,14 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', user_restricted, upload.single('image_url'), (req, res) => {
+router.post('/', user_restricted, upload.single('image_raw'), (req, res) => {
   const imageData = req.body;
   const imageFile = req.file;
 
+  imageData.thumbnail = !!imageData.thumbnail
+
   if (imageFile) {
-    imageData.image_url = imageFile.path
+    imageData.image_url = imageFile.path.replace('uploads\\', "")
 
     Images.add(imageData)
     .then(image => {
@@ -76,9 +78,15 @@ router.post('/', user_restricted, upload.single('image_url'), (req, res) => {
   }
 });
 
-router.put('/:id', user_restricted, (req, res) => {
+
+router.put('/:id', user_restricted, upload.single('image_raw'), (req, res) => {
   const { id } = req.params;
   const changes = req.body;
+  const imageFile = req.file;
+
+  if (imageFile) {
+    changes.image_url = imageFile.path.replace('uploads\\', "")
+  }
 
   Images.findById(id)
   .then(image => {
