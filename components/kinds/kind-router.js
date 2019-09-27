@@ -16,7 +16,6 @@ router.get('/', (req, res) => {
   Kinds.find(sort, sortdir, searchTerm)
   .then(kinds => {
     const items = kinds
-    console.log(kinds)
     // get page from query params or default to first page
     const page = parseInt(req.query.page) || 1;
 

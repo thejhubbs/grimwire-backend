@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 
 const ImageRouter = require('./components/images/image-router.js');
 const PantheonRouter = require('./components/pantheons/pantheon-router.js');
